@@ -140,7 +140,7 @@
   .p-sec h5{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;letter-spacing:.02em;
     padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--line)}
   .p-sec h5 span{font-family:"Noto Sans KR",sans-serif;font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
-  .role{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);margin:4px 0 8px}
+  .role{font-family:"Cormorant Garamond",serif;font-size:17px;font-weight:600;letter-spacing:.04em;color:var(--accent-ink);margin:4px 0 8px}
   .chars + .role{margin-top:18px}
   .chars{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   .char{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -822,7 +822,7 @@ function openDetail(w){
   const mains = w.chars.filter(c => !c.sub), subs = w.chars.filter(c => c.sub);
   const chars = !w.chars.length ? `<div class="empty-note">등장인물 소개 준비 중</div>`
     : !subs.length ? charHTML(mains)
-    : `<div class="role">주연</div>${charHTML(mains)}<div class="role">조연</div>${charHTML(subs)}`;
+    : `<div class="role">Main</div>${charHTML(mains)}<div class="role">Supporting</div>${charHTML(subs)}`;
   const guide = w.guide.length
     ? `<ol class="guide">${w.guide.map(g => `<li>${esc(g)}</li>`).join("")}</ol>`
     : `<div class="empty-note">플레이 가이드 준비 중</div>`;
