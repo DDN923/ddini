@@ -790,7 +790,7 @@ const typeBadge = k => k === "T" ? `<span class="type t">T SERIES</span>` : `<sp
 function card(w, key, i){
   const badge = w.soon ? `<span class="badge">COMING SOON</span>`
     : w.updated ? `<span class="badge">UPDATE ${esc(w.updated)}</span>` : "";
-  const orig = w.orig ? `<div class="orig">원작 · ${esc(w.orig)}</div>` : `<div></div>`;
+  const orig = `<div class="orig">${w.orig ? `원작 · ${esc(w.orig)}` : "오리지널"}</div>`;
   const desc = `<p class="desc">${esc(w.desc || "")}</p>`;
   const tags = `<div class="tags">${w.genre.map(g => `<span class="tag">${esc(g)}</span>`).join("")}</div>`;
   const plat = `<div class="plat">${w.plat.map(esc).join(" · ")}</div>`;
