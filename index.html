@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="ivory">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>띠니 | AI Chat Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="ivory"]{
+    --bg:#FFFFFF; --surface:#FFFFFF; --text:#26292C; --muted:#7F8589;
+    --line:#E3EEF5; --accent:#A6D2EE; --accent-ink:#4688B4; --accent-soft:#E6F3FB; --cover:#F2F8FC; --on-accent:#1E3442; --navy:#2E4A6B;
+  }
+  :root[data-theme="dark"]{
+    --bg:#121013; --surface:#1B181C; --text:#EFE8E4; --muted:#9A8F93;
+    --line:#2E282F; --accent:#D9A3A3; --accent-soft:#2F2327; --cover:#231F24; --on-accent:#121013; --accent-ink:#D9A3A3; --navy:#D9A3A3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  /* 상단 */
+  .top{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+  .logo{font-family:"Cormorant Garamond",serif;font-size:15px;letter-spacing:.28em;color:var(--muted)}
+  .theme{font-size:12px;letter-spacing:.08em;border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--muted)}
+  .theme:hover{border-color:var(--accent);color:var(--accent-ink)}
+
+  .hero{text-align:center;padding:56px 0 44px;border-bottom:1px solid var(--line)}
+  .hero .eyebrow{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:18px;color:var(--accent-ink)}
+  .hero h1{font-family:"Noto Serif KR",serif;font-weight:700;font-size:clamp(44px,9vw,76px);letter-spacing:.04em;margin:6px 0 10px}
+  .hero p{color:var(--muted);font-size:15px}
+  .sns{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:26px}
+  .sns a{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:8px 18px;background:var(--surface);transition:.2s}
+  .sns a:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .sns a.empty{opacity:.55}
+
+  /* 최근 소식 */
+  .news{margin:28px 0 4px;border:1px solid var(--line);border-radius:16px;padding:14px 18px;background:var(--surface)}
+  .news-h{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;letter-spacing:.06em;color:var(--accent-ink);margin-bottom:6px}
+  .news ul{list-style:none}
+  .news li{display:flex;gap:10px;align-items:baseline;padding:7px 0;font-size:14px;border-top:1px solid var(--line)}
+  .news li:first-child{border-top:0}
+  .news li.link{cursor:pointer}
+  .news li.link:hover .n-t{color:var(--accent-ink)}
+  .n-d{flex:none;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .n-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .n-t b{font-weight:700;margin-right:6px}
+  .n-none{font-size:13px;color:var(--muted);padding:6px 0}
+
+  /* 검색·필터 */
+  .tools{position:sticky;top:0;z-index:5;background:var(--bg);padding:16px 0 12px;border-bottom:1px solid var(--line)}
+  .row{display:flex;gap:8px;margin-top:12px}
+  .sort{flex:none;font:inherit;font-size:13px;color:var(--text);background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:0 14px;outline:none;cursor:pointer}
+  .sort:focus{border-color:var(--accent)}
+  .search{flex:1;min-width:0;width:100%;font:inherit;font-size:15px;color:var(--text);background:var(--surface);
+    border:1px solid var(--line);border-radius:999px;padding:12px 20px;outline:none}
+  .search:focus{border-color:var(--accent)}
+  .search::placeholder{color:var(--muted)}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding-top:12px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+  .seg{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px;width:max-content}
+  .seg button{font-size:13px;padding:6px 16px;border-radius:999px;color:var(--muted)}
+  .seg button.on{background:var(--navy);color:var(--bg);font-weight:500}
+  .type{white-space:nowrap;font-size:9px;letter-spacing:.14em;font-weight:700;
+    padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.88);color:var(--text);border:1px solid var(--line)}
+  .type.t{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+  /* 섹션 */
+  section{padding:44px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px}
+  .sec-head h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:32px;letter-spacing:.02em}
+  .sec-head .ko{font-size:13px;color:var(--muted)}
+  .sec-head .cnt{margin-left:auto;font-size:12px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 14px}
+  @media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr);gap:30px 20px}}
+  @media(min-width:960px){.grid{grid-template-columns:repeat(4,1fr)}}
+
+  .card{display:flex;flex-direction:column}
+  .cover{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:var(--cover);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .cover img,.p-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .cover img.blur,.p-cover img.blur{display:none;filter:blur(18px) brightness(.9);transform:scale(1.15)}
+  .tall img.blur{display:block}
+  .tall img.main{object-fit:contain}
+  .cover .ph{font-family:"Cormorant Garamond",serif;font-size:13px;letter-spacing:.24em;color:var(--muted)}
+  .badges{position:absolute;top:8px;left:8px;right:8px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
+  .badge{font-size:9px;white-space:nowrap;letter-spacing:.12em;font-weight:700;
+    padding:4px 9px;border-radius:999px;background:var(--surface);color:var(--accent-ink);border:1px solid var(--accent)}
+  .card h3{font-family:"Noto Serif KR",serif;font-weight:700;font-size:16px;line-height:1.4;margin-top:12px;word-break:keep-all}
+  .orig{font-size:12px;color:var(--muted);margin-top:2px}
+  .desc{font-size:13px;color:var(--muted);margin-top:6px;word-break:keep-all}
+  .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)}
+  .plat{font-size:11px;color:var(--muted);margin-top:8px}
+  .card .plat{margin-bottom:12px}
+  .go{display:block;margin-top:auto;font-size:13px;font-weight:500;text-align:center;padding:9px 0;border-radius:10px;
+    border:1px solid var(--navy);color:var(--navy);transition:.2s}
+  .go:hover{background:var(--navy);color:var(--bg)}
+  .go.off{border-color:var(--line);color:var(--muted);pointer-events:none}
+  .none{grid-column:1/-1;text-align:center;color:var(--muted);font-size:14px;padding:32px 0}
+
+  /* 작품 상세 */
+  .card{cursor:pointer}
+  .card:hover .cover{border-color:var(--accent)}
+  .sheet{position:fixed;inset:0;z-index:15;display:none;align-items:flex-end;justify-content:center;background:rgba(20,30,40,.35)}
+  .sheet.open{display:flex}
+  .panel{width:100%;max-width:640px;max-height:92vh;overflow-y:auto;background:var(--surface);
+    border-radius:22px 22px 0 0;padding:0 0 28px}
+  @media(min-width:700px){.sheet{align-items:center;padding:20px}.panel{border-radius:22px;max-height:88vh}}
+  .p-cover{aspect-ratio:1/1;max-height:340px;width:100%;overflow:hidden;background:var(--cover);display:flex;align-items:center;justify-content:center;position:relative}
+  .p-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--surface);
+    border:1px solid var(--line);font-size:18px;line-height:1}
+  .p-body{padding:22px 22px 0}
+  .p-body h3{font-family:"Noto Serif KR",serif;font-size:22px;line-height:1.35;word-break:keep-all}
+  .p-sec{margin-top:22px}
+  .p-sec h5{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;letter-spacing:.02em;
+    padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+  .p-sec h5 span{font-family:"Noto Sans KR",sans-serif;font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+  .chars{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .char{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .char .ava{aspect-ratio:1/1;background:var(--cover);overflow:hidden}
+  .char > div:last-child{padding:10px 12px 12px}
+  .char .ava img{width:100%;height:100%;object-fit:cover}
+  .char b{font-size:15px}
+  .char p{font-size:13px;color:var(--muted);margin-top:2px;word-break:keep-all}
+  .guide{list-style:none;counter-reset:g;display:grid;gap:8px}
+  .guide li{counter-increment:g;position:relative;padding-left:30px;font-size:14px;word-break:keep-all}
+  .guide li::before{content:counter(g);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent-ink);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .empty-note{font-size:13px;color:var(--muted);padding:14px;text-align:center;border:1px dashed var(--line);border-radius:12px}
+  .links{display:flex;flex-wrap:wrap;gap:8px}
+  .links button{flex:1 1 120px}
+  .links button:first-child{flex-basis:100%}
+  .links button{width:100%;font-size:14px;padding:12px 0;border-radius:12px;border:1px solid var(--line);transition:.2s}
+  .links button.main{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+  .links button.off{opacity:.5}
+
+  /* 링크 팝업 */
+  .modal{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;
+    background:rgba(20,30,40,.35);padding:20px}
+  .modal.open{display:flex}
+  .box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:24px 22px 20px;box-shadow:0 12px 40px rgba(30,52,66,.18)}
+  .box h4{font-family:"Noto Serif KR",serif;font-size:18px;margin-bottom:12px}
+  .url{font-size:13px;color:var(--muted);background:var(--cover);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;word-break:break-all;min-height:42px}
+  .btns{display:flex;gap:8px;margin-top:16px}
+  .btns button,.btns a{flex:1;text-align:center;font-size:14px;padding:10px 0;border-radius:10px;border:1px solid var(--line)}
+  .btns .move{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+  .btns .move.off{opacity:.45;pointer-events:none}
+
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:56px 0 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="logo">TTINI</span>
+    <button class="theme" id="themeBtn">DARK</button>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">AI Chat Archive</div>
+    <h1>띠니</h1>
+    <p>크리에이터 한 줄 소개 자리 (임시)</p>
+    <nav class="sns" id="sns"></nav>
+  </header>
+
+  <div class="news" id="news"><div class="news-h">NEWS</div><ul id="newsList"></ul></div>
+
+  <div class="tools">
+    <div class="seg" id="seg">
+      <button class="on" data-t="all">전체</button>
+      <button data-t="O">Original</button>
+      <button data-t="T">T Series</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="작품 제목 · 원작 · 장르 검색" autocomplete="off">
+      <select class="sort" id="sort" aria-label="정렬">
+        <option value="new">최신순</option>
+        <option value="old">오래된순</option>
+        <option value="upd">최근 업데이트순</option>
+        <option value="az">이름 ㄱ→ㅎ</option>
+        <option value="za">이름 ㅎ→ㄱ</option>
+      </select>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head"><h2>Works</h2><span class="ko">작품 목록</span><span class="cnt" id="cnt"></span></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <footer>© 띠니</footer>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="panel" role="dialog" aria-modal="true" id="panel"></div>
+</div>
+
+<div class="modal" id="newsModal">
+  <div class="box" role="dialog" aria-modal="true">
+    <div class="n-d" id="nDate"></div>
+    <h4 id="nTitle" style="margin-top:4px"></h4>
+    <p id="nBody" style="font-size:14px;white-space:pre-line;word-break:keep-all;color:var(--text)"></p>
+    <div class="btns"><button id="nGo" class="move">작품 보러 가기</button></div>
+    <div class="btns"><button id="nClose">닫기</button></div>
+  </div>
+</div>
+<div class="modal" id="modal">
+  <div class="box" role="dialog" aria-modal="true">
+    <h4 id="mTitle"></h4>
+    <div class="url" id="mUrl"></div>
+    <div class="btns">
+      <button id="mCopy">복사</button>
+      <a class="move" id="mGo" target="_blank" rel="noopener">이동</a>
+    </div>
+    <div class="btns"><button id="mClose">닫기</button></div>
+  </div>
+</div>
+
+<script>
+/* ===================== 여기만 고치면 됨 =====================
+   cover  : 표지 이미지 경로 (1:1). 비우면 빈 정사각형
+   desc   : 카드에 보이는 한 줄 소개
+   date   : 공개일 "YYYY.MM.DD" (최신순·오래된순 기준. 비우면 맨 뒤로)
+   updated: 마지막 리뉴얼일 "YYYY.MM.DD" (있으면 UPDATE 뱃지 + 최근 업데이트순 기준)
+   soon   : true면 COMING SOON 뱃지 (최신순에서 맨 위)
+   chars  : 등장인물 [{ name:"", info:"", img:"" }]
+   guide  : 플레이 가이드 ["한 줄", "한 줄"]
+   links  : intro(캐릭터 소개 페이지) / 투킷 / 베이비챗
+============================================================ */
+// 최근 소식: 날짜 최신 3개만 보임. work에 작품명을 쓰면 누를 때 그 작품 상세가 열림
+// body를 쓰면 누를 때 소식 전문 팝업이 뜨고(작품 바로가기 버튼 포함), 안 쓰면 작품 상세가 바로 열림
+// 예) { date: "2026.11.20", work: "모두가 나를 싫어한다", text: "v3.0 업데이트", body: "상점 추가\n판정 블록 추가" }
+const NEWS = [
+  { date: "2026.11.16", work: "", text: "띠니 작품 소개 사이트 오픈!", body: "작품을 한눈에 볼 수 있는 사이트를 열었어요.\n장르·검색·정렬로 원하는 작품을 찾아보세요." },
+];
+
+const SNS = [
+  { name: "X",        link: "https://x.com/ddini923" },
+  { name: "투킷",     link: "" },
+  { name: "베이비챗", link: "" },
+];
+
+const W = (title, genre, extra = {}) => ({
+  title, genre, plat: ["투킷","베이비챗"], date: "", updated: "", desc: "", cover: "",
+  chars: [], guide: [], links: { intro: "", 투킷: "", 베이비챗: "" }, ...extra
+});
+
+const ORIGINAL = [
+  W("이혼은 제가 하겠습니다", ["로맨스 판타지","HL"], { cover: "covers/divorce.webp" }),
+  W("주의! 이상 반응 발생!", ["현대 판타지","로맨틱 코미디","HL","BL","GL"], { cover: "covers/abnormal.webp" }),
+  W("제7임시분견대 - 애런", ["판타지·SF","HL","BL"], { cover: "covers/aaron.webp" }),
+  W("꽃 대신 맘모스를 받았다", ["로맨틱 코미디","HL"], { cover: "covers/mammoth.webp" }),
+  W("순백의 욕망", ["판타지·SF","HL","BL"], { cover: "covers/pure-desire.webp" }),
+  W("팔자 고치러 입궁합니다", ["동양풍·사극","HL","BL"], { date: "2026.10.31", cover: "covers/palja.webp" }),
+  W("모두가 나를 싫어한다", ["로맨스 판타지"], { date: "2026.07.12", cover: "covers/everyone-hates-me.webp" }),
+  W("강도현", ["현대 로맨스","HL","BL"], {
+    cover: "covers/dohyun.webp",
+    links: {
+      intro: "",
+      투킷: "https://tookit.ai/character/u/79c0f7fa-dee6-487d-8e04-8faa58bf86d7/profile",
+      베이비챗: "https://babechat.ai/character/u/79c0f7fa-dee6-487d-8e04-8faa58bf86d7/profile",
+    },
+  }),
+  W("과부하 황족들의 인간 진정제가 되었다", [], { date: "2026.06.27" }),
+  W("제7임시분견대 - 라일", ["판타지·SF","HL","BL"], { soon: true }),
+  W("글레이즈드 앤 바이트", ["현대 판타지","미스터리·스릴러","로맨틱 코미디","HL","BL"], { soon: true }),
+  W("최애는 손대는 게 아니랬는데", ["로맨스 판타지","로맨틱 코미디","HL"], { soon: true }),
+];
+
+const T = (title, orig, cover = "") => W(title, [], { orig, cover });
+const TSERIES = [
+  T("걱정이 아니라 질투잖아", "꼰대 오빠", "covers/jealousy.webp"),
+  T("이상한 조직에 입단했습니다", "사랑이는 사랑스러워", "covers/strange-org.webp"),
+  T("류재진이 어쩌다 이렇게 됐나", "당신의 세상에서", "covers/ryu-jaejin.webp"),
+  T("김 비서의 수상한 휴가", "", "covers/secretary-kim.webp"),
+  T("어쩌다 마주친 로맨스", "", "covers/by-chance.webp"),
+  T("계약 부부가 돌아왔다", "", "covers/contract-couple.webp"),
+  T("앞집 남자가 자꾸 선을 넘는다", "사랑하는 그대에게", "covers/next-door.webp"),
+];
+/* ===================== 여기까지 ===================== */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s).toLowerCase().replace(/\s+/g, "");
+// 플랫폼 링크 (작품명: [투킷, 베이비챗])
+const LINKS = {
+  "이혼은 제가 하겠습니다": ["https://tookit.ai/character/u/2a3d05e4-1f34-4757-930f-39abd2053ddf/profile", "https://babechat.ai/character/u/2a3d05e4-1f34-4757-930f-39abd2053ddf/profile"],
+  "주의! 이상 반응 발생!": ["https://tookit.ai/character/u/6be2d3e9-008d-4cdb-894e-a51191832cb6/profile", "https://babechat.ai/character/u/6be2d3e9-008d-4cdb-894e-a51191832cb6/profile"],
+  "제7임시분견대 - 애런": ["https://tookit.ai/character/u/286b3ce8-3285-4f27-9e73-98d7b373b7d0/profile", "https://babechat.ai/character/u/286b3ce8-3285-4f27-9e73-98d7b373b7d0/profile"],
+  "꽃 대신 맘모스를 받았다": ["https://tookit.ai/character/u/7a73f042-0ee1-4f59-9e47-0fb0043cc5f4/profile", "https://babechat.ai/character/u/7a73f042-0ee1-4f59-9e47-0fb0043cc5f4/profile"],
+  "순백의 욕망": ["https://tookit.ai/character/u/63881496-6bd6-4d9e-b36b-531c9a8e9957/profile", "https://babechat.ai/character/u/63881496-6bd6-4d9e-b36b-531c9a8e9957/profile"],
+  "팔자 고치러 입궁합니다": ["https://tookit.ai/character/u/dd6dcbbb-3494-4233-b6ce-866543706156/profile", "https://babechat.ai/character/u/dd6dcbbb-3494-4233-b6ce-866543706156/profile"],
+  "모두가 나를 싫어한다": ["https://tookit.ai/character/u/6b4d9946-4862-4190-ac9b-b1696b0ee565/profile", "https://babechat.ai/character/u/6b4d9946-4862-4190-ac9b-b1696b0ee565/profile"],
+  "과부하 황족들의 인간 진정제가 되었다": ["https://tookit.ai/character/u/17a3d435-a6fe-428e-a5a1-e4c8dfb8471d/profile", "https://babechat.ai/character/u/17a3d435-a6fe-428e-a5a1-e4c8dfb8471d/profile"],
+  "걱정이 아니라 질투잖아": ["https://tookit.ai/character/u/56417960-032f-47ce-a832-4b9a90f8ae7f/profile", "https://babechat.ai/character/u/56417960-032f-47ce-a832-4b9a90f8ae7f/profile"],
+  "이상한 조직에 입단했습니다": ["https://tookit.ai/character/u/6e430e06-6245-4484-ad9e-d279a70ccf5b/profile", "https://babechat.ai/character/u/6e430e06-6245-4484-ad9e-d279a70ccf5b/profile"],
+  "류재진이 어쩌다 이렇게 됐나": ["https://tookit.ai/character/u/943ffc9e-17f5-4534-8916-1dfb3af5c1bf/profile", "https://babechat.ai/character/u/943ffc9e-17f5-4534-8916-1dfb3af5c1bf/profile"],
+  "김 비서의 수상한 휴가": ["https://tookit.ai/character/u/248198ce-5bf5-44a1-93d0-166ec32f9c60/profile", "https://babechat.ai/character/u/248198ce-5bf5-44a1-93d0-166ec32f9c60/profile"],
+  "어쩌다 마주친 로맨스": ["https://tookit.ai/character/u/2acdf6d5-3abb-4f1a-8b82-0f7d99bf9a21/profile", "https://babechat.ai/character/u/2acdf6d5-3abb-4f1a-8b82-0f7d99bf9a21/profile"],
+  "계약 부부가 돌아왔다": ["https://tookit.ai/character/u/0408dca2-f80e-4073-9f41-67b2d063b0ff/profile", "https://babechat.ai/character/u/0408dca2-f80e-4073-9f41-67b2d063b0ff/profile"],
+  "앞집 남자가 자꾸 선을 넘는다": ["https://tookit.ai/character/u/fc65aeda-02b2-4d6e-b2f3-bbf0c3c4f0a0/profile", "https://babechat.ai/character/u/fc65aeda-02b2-4d6e-b2f3-bbf0c3c4f0a0/profile"],
+};
+for (const w of [...ORIGINAL, ...TSERIES]) {
+  const l = LINKS[w.title]; if (!l) continue;
+  if (l[0]) w.links.투킷 = l[0];
+  if (l[1]) w.links.베이비챗 = l[1];
+}
+const ALL = { O: ORIGINAL, T: TSERIES };
+let genre = "전체";
+let type = "all";
+
+/* ---------- 링크 팝업 (공용) ---------- */
+function openLink(name, link){
+  $("mTitle").textContent = name;
+  $("mUrl").textContent = link || "링크 준비 중이에요";
+  $("mGo").href = link || "#";
+  $("mGo").classList.toggle("off", !link);
+  $("mCopy").textContent = "복사";
+  $("mCopy").disabled = !link;
+  $("modal").classList.add("open");
+}
+$("mCopy").addEventListener("click", () => {
+  const done = () => $("mCopy").textContent = "복사됨";
+  if (navigator.clipboard) navigator.clipboard.writeText($("mUrl").textContent).then(done).catch(() => {});
+});
+const closeM = () => $("modal").classList.remove("open");
+$("mClose").addEventListener("click", closeM);
+$("modal").addEventListener("click", e => { if (e.target.id === "modal") closeM(); });
+
+/* ---------- SNS ---------- */
+$("sns").innerHTML = SNS.map((s, i) =>
+  `<a href="#" data-i="${i}"${s.link ? "" : ` class="empty"`}>${esc(s.name)}</a>`).join("");
+$("sns").addEventListener("click", e => {
+  const a = e.target.closest("a"); if (!a) return;
+  e.preventDefault();
+  const s = SNS[a.dataset.i]; openLink(s.name, s.link);
+});
+
+/* ---------- 장르 칩 ---------- */
+// 장르 칩 순서 (노션 DB 순서). 목록에 없는 장르는 뒤에 붙음
+const ORDER = ["현대 로맨스","로맨스 판타지","동양풍·사극","현대 판타지","판타지·SF","미스터리·스릴러","로맨틱 코미디","HL","BL","GL"];
+const used = new Set([...ORIGINAL, ...TSERIES].flatMap(w => w.genre));
+const genres = ["전체", ...ORDER.filter(g => used.has(g)), ...[...used].filter(g => !ORDER.includes(g))];
+function drawChips(){
+  $("chips").innerHTML = genres.map(g =>
+    `<button class="chip${g === genre ? " on" : ""}" data-g="${esc(g)}">${esc(g)}</button>`).join("");
+}
+$("chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  genre = b.dataset.g; drawChips(); draw();
+});
+
+/* ---------- 카드 ---------- */
+function coverHTML(w){
+  if (!w.cover) return `<span class="ph">COVER</span>`;
+  const src = esc(w.cover);
+  // 정사각형이 아닌 표지는 흐린 배경 위에 전체가 보이게
+  return `<img class="blur" src="${src}" alt="" aria-hidden="true" loading="lazy">`
+    + `<img class="main" src="${src}" alt="${esc(w.title)} 표지" loading="lazy"`
+    + ` onload="if(Math.abs(this.naturalWidth-this.naturalHeight)>8)this.parentNode.classList.add('tall')"`
+    + ` onerror="this.parentNode.innerHTML='<span class=ph>COVER</span>'">`;
+}
+const typeBadge = k => k === "T" ? `<span class="type t">T SERIES</span>` : `<span class="type">ORIGINAL</span>`;
+function card(w, key, i){
+  const badge = w.soon ? `<span class="badge">COMING SOON</span>`
+    : w.updated ? `<span class="badge">UPDATE ${esc(w.updated.slice(5))}</span>` : "";
+  const orig = w.orig ? `<div class="orig">원작 · ${esc(w.orig)}</div>` : "";
+  const desc = w.desc ? `<p class="desc">${esc(w.desc)}</p>` : "";
+  const tags = w.genre.length ? `<div class="tags">${w.genre.map(g => `<span class="tag">${esc(g)}</span>`).join("")}</div>` : "";
+  const plat = `<div class="plat">${w.plat.map(esc).join(" · ")}</div>`;
+  return `<article class="card" data-k="${key}" data-i="${i}" tabindex="0">
+    <div class="cover">${coverHTML(w)}<div class="badges">${typeBadge(key)}${badge}</div></div><h3>${esc(w.title)}</h3>${orig}${desc}${tags}${plat}
+    <span class="go">자세히 보기</span></article>`;
+}
+
+function match(w, q){
+  if (genre !== "전체" && !w.genre.includes(genre)) return false;
+  if (!q) return true;
+  const chars = w.chars.map(c => c.name).join(" ");
+  return norm([w.title, w.orig || "", w.genre.join(" "), w.desc, chars].join(" ")).includes(q);
+}
+
+function draw(){
+  const q = norm($("q").value);
+  const keys = type === "all" ? ["O","T"] : [type];
+  // 원래 순서: Original 먼저, 그다음 T Series (같은 날짜일 때 기준)
+  let n = 0;
+  const pool = keys.flatMap(k => ALL[k].map((w, i) => ({ w, k, i, o: n++ })));
+  const list = sortList(pool.filter(x => match(x.w, q)).map(x => [x.w, x.o, x]));
+  $("grid").innerHTML = list.length ? list.map(([,, x]) => card(x.w, x.k, x.i)).join("")
+    : `<div class="none">해당하는 작품이 없어요</div>`;
+  $("cnt").textContent = list.length + "작품";
+}
+$("q").addEventListener("input", draw);
+$("sort").addEventListener("change", draw);
+$("seg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  type = b.dataset.t;
+  $("seg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  draw();
+});
+
+function sortList(list){
+  const mode = $("sort").value;
+  const byName = (a, b) => a[0].title.localeCompare(b[0].title, "ko");
+  if (mode === "az") return list.sort(byName);
+  if (mode === "za") return list.sort((a, b) => byName(b, a));
+  // 날짜: 공개 예정 > 날짜 있음 > 날짜 없음
+  // 최근 업데이트순: 리뉴얼일(없으면 공개일) / 최신순·오래된순: 공개일
+  if (mode === "upd"){
+    const k = w => w.updated || w.date;
+    const r = w => w.updated ? 3 : w.date ? 2 : w.soon ? 1 : 0;
+    return list.sort((a, b) => {
+      const A = a[0], B = b[0];
+      if (r(A) !== r(B)) return r(B) - r(A);
+      if (k(A) && k(B) && k(A) !== k(B)) return k(B).localeCompare(k(A));
+      return a[1] - b[1];
+    });
+  }
+  const key = w => w.date;
+  const rank = w => w.soon ? 2 : key(w) ? 1 : 0;
+  return list.sort((a, b) => {
+    const A = a[0], B = b[0], rA = rank(A), rB = rank(B);
+    if (rA !== rB){
+      if (!rA || !rB) return rB - rA;            // 날짜 없는 작품은 항상 맨 뒤
+      return mode === "new" ? rB - rA : rA - rB; // 공개 예정: 최신순 맨 위, 오래된순 아래
+    }
+    const kA = key(A), kB = key(B);
+    if (kA && kB && kA !== kB) return mode === "new" ? kB.localeCompare(kA) : kA.localeCompare(kB);
+    return a[1] - b[1];
+  });
+}
+
+/* ---------- 작품 상세 ---------- */
+let cur = null;
+function openDetail(w){
+  cur = w;
+  const orig = w.orig ? `<div class="orig">원작 · ${esc(w.orig)}</div>` : "";
+  const tags = w.genre.length ? `<div class="tags">${w.genre.map(g => `<span class="tag">${esc(g)}</span>`).join("")}</div>` : "";
+  const desc = w.desc ? `<p class="desc">${esc(w.desc)}</p>` : "";
+  const chars = w.chars.length
+    ? `<div class="chars">${w.chars.map(c => `<div class="char"><div class="ava">${c.img ? `<img src="${esc(c.img)}" alt="">` : ""}</div>
+        <div><b>${esc(c.name)}</b><p>${esc(c.info || "")}</p></div></div>`).join("")}</div>`
+    : `<div class="empty-note">등장인물 소개 준비 중</div>`;
+  const guide = w.guide.length
+    ? `<ol class="guide">${w.guide.map(g => `<li>${esc(g)}</li>`).join("")}</ol>`
+    : `<div class="empty-note">플레이 가이드 준비 중</div>`;
+  const btns = [["intro","캐릭터 소개 페이지"], ...w.plat.map(p => [p, p])]
+    .map(([k, label], n) => `<button class="${n ? "main" : ""}${w.links[k] ? "" : " off"}" data-l="${esc(k)}" data-n="${esc(label)}">${esc(label)}</button>`).join("");
+
+  $("panel").innerHTML = `
+    <div class="p-cover">${coverHTML(w)}<div class="badges">${typeBadge(TSERIES.includes(w) ? "T" : "O")}${w.soon ? `<span class="badge">COMING SOON</span>` : w.updated ? `<span class="badge">UPDATE ${esc(w.updated.slice(5))}</span>` : ""}</div><button class="p-x" id="pX" aria-label="닫기">✕</button></div>
+    <div class="p-body">
+      <h3>${esc(w.title)}</h3>${orig}${desc}${tags}
+      <div class="p-sec"><div class="links">${btns}</div></div>
+      <div class="p-sec"><h5>Characters<span>등장인물</span></h5>${chars}</div>
+      <div class="p-sec"><h5>Play Guide<span>플레이 가이드</span></h5>${guide}</div>
+    </div>`;
+  $("sheet").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeDetail(){ $("sheet").classList.remove("open"); document.body.style.overflow = ""; }
+
+document.addEventListener("click", e => {
+  const c = e.target.closest(".card");
+  if (c) return openDetail(ALL[c.dataset.k][c.dataset.i]);
+});
+document.addEventListener("keydown", e => {
+  const c = e.target.closest && e.target.closest(".card");
+  if (c && e.key === "Enter") openDetail(ALL[c.dataset.k][c.dataset.i]);
+  if (e.key === "Escape") $("modal").classList.contains("open") ? closeM() : closeDetail();
+});
+$("sheet").addEventListener("click", e => {
+  if (e.target.id === "sheet" || e.target.id === "pX") return closeDetail();
+  const b = e.target.closest("[data-l]");
+  if (b) openLink(b.dataset.n, cur.links[b.dataset.l]);
+});
+
+/* ---------- 테마 ---------- */
+const root = document.documentElement;
+function setTheme(t){
+  root.dataset.theme = t;
+  $("themeBtn").textContent = t === "ivory" ? "DARK" : "LIGHT";
+  try { localStorage.setItem("ttini-theme", t); } catch(e){}
+}
+$("themeBtn").addEventListener("click", () => setTheme(root.dataset.theme === "ivory" ? "dark" : "ivory"));
+try { const s = localStorage.getItem("ttini-theme"); if (s) setTheme(s); } catch(e){}
+
+/* ---------- 최근 소식 ---------- */
+const findWork = t => [...ORIGINAL, ...TSERIES].find(w => w.title === t);
+function drawNews(){
+  const top = [...NEWS].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  $("newsList").innerHTML = top.length
+    ? top.map((n, i) => `<li class="${findWork(n.work) || n.body ? "link" : ""}" data-n="${NEWS.indexOf(n)}">
+        <span class="n-d">${esc(n.date.slice(5))}</span>
+        <span class="n-t">${n.work ? `<b>${esc(n.work)}</b>` : ""}${esc(n.text)}</span></li>`).join("")
+    : `<li class="n-none">아직 소식이 없어요</li>`;
+}
+const closeN = () => $("newsModal").classList.remove("open");
+$("nClose").addEventListener("click", closeN);
+$("newsModal").addEventListener("click", e => { if (e.target.id === "newsModal") closeN(); });
+$("newsList").addEventListener("click", e => {
+  const li = e.target.closest("li.link"); if (!li) return;
+  const n = NEWS[li.dataset.n], w = findWork(n.work);
+  if (!n.body) return openDetail(w);
+  $("nDate").textContent = n.date;
+  $("nTitle").textContent = (n.work ? n.work + " · " : "") + n.text;
+  $("nBody").textContent = n.body;
+  $("nGo").style.display = w ? "" : "none";
+  $("nGo").onclick = () => { closeN(); openDetail(w); };
+  $("newsModal").classList.add("open");
+});
+
+drawNews(); drawChips(); draw();
+</script>
+</body>
+</html>
