@@ -18,7 +18,8 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;
+  html{background:var(--bg);transition:background .3s}
+  body{background:transparent;color:var(--text);font-family:"Noto Sans KR",system-ui,sans-serif;
     line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
   a{color:inherit;text-decoration:none}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -54,7 +55,7 @@
   .n-none{font-size:13px;color:var(--muted);padding:6px 0}
 
   /* 검색·필터 */
-  .tools{position:sticky;top:0;z-index:5;background:var(--bg);padding:16px 0 12px;border-bottom:1px solid var(--line)}
+  .tools{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);padding:16px 0 12px;border-bottom:1px solid var(--line)}
   .row{display:flex;gap:8px;margin-top:12px}
   .sort{flex:none;font:inherit;font-size:13px;color:var(--text);background:var(--surface);border:1px solid var(--line);
     border-radius:999px;padding:0 14px;outline:none;cursor:pointer}
@@ -165,10 +166,33 @@
   .btns .move{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
   .btns .move.off{opacity:.45;pointer-events:none}
 
+  /* 배경 효과: 천천히 떠다니는 빛 + 작은 반짝임 */
+  .bgfx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:drift 26s ease-in-out infinite alternate}
+  .blob.b1{width:46vmax;height:46vmax;left:-12vmax;top:-10vmax;background:var(--accent-soft)}
+  .blob.b2{width:38vmax;height:38vmax;right:-14vmax;top:30vh;background:var(--accent);opacity:.18;animation-duration:32s;animation-delay:-8s}
+  .blob.b3{width:34vmax;height:34vmax;left:20vw;bottom:-16vmax;background:var(--accent-soft);animation-duration:38s;animation-delay:-15s}
+  @keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,4vh) scale(1.08)}100%{transform:translate(-4vw,8vh) scale(.95)}}
+  .spark{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0;animation:twinkle linear infinite}
+  @keyframes twinkle{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:.7}80%{opacity:.5}100%{opacity:0;transform:translateY(-60px) scale(1)}}
+
+  /* 누를 때 퐁 */
+  .pop{position:fixed;z-index:60;pointer-events:none;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
+    border:2px solid var(--accent-ink);animation:popring .5s ease-out forwards}
+  .pop-dot{position:fixed;z-index:60;pointer-events:none;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;
+    background:var(--accent);animation:popdot .55s ease-out forwards}
+  @keyframes popring{from{transform:scale(.3);opacity:.9}to{transform:scale(3.2);opacity:0}}
+  @keyframes popdot{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+  button,.card,.sns a,.go,.chip,.news li.link{transition:transform .12s ease}
+  button:active,.sns a:active,.chip:active,.go:active,.news li.link:active{transform:scale(.94)}
+  .card:active{transform:scale(.97)}
+  @media (prefers-reduced-motion:reduce){.blob,.spark{animation:none}.pop,.pop-dot{display:none}}
+
   footer{text-align:center;color:var(--muted);font-size:12px;padding:56px 0 40px}
 </style>
 </head>
 <body>
+<div class="bgfx" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 <div class="wrap">
   <div class="top">
     <span class="logo">DDINI</span>
@@ -699,6 +723,35 @@ $("newsList").addEventListener("click", e => {
   $("nGo").onclick = () => { closeN(); openDetail(w); };
   $("newsModal").classList.add("open");
 });
+
+/* ---------- 효과: 반짝임 + 누를 때 퐁 ---------- */
+(() => {
+  const fx = document.querySelector(".bgfx");
+  for (let i = 0; i < 14; i++){
+    const s = document.createElement("span");
+    s.className = "spark";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = (20 + Math.random() * 80) + "vh";
+    s.style.animationDuration = (6 + Math.random() * 8) + "s";
+    s.style.animationDelay = (-Math.random() * 12) + "s";
+    fx.appendChild(s);
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.addEventListener("pointerdown", e => {
+    const add = (cls, css) => {
+      const el = document.createElement("span");
+      el.className = cls; el.style.left = e.clientX + "px"; el.style.top = e.clientY + "px";
+      Object.entries(css || {}).forEach(([k, v]) => el.style.setProperty(k, v));
+      document.body.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
+    };
+    add("pop");
+    for (let i = 0; i < 6; i++){
+      const a = (Math.PI * 2 * i) / 6 + Math.random() * .4, r = 22 + Math.random() * 10;
+      add("pop-dot", { "--dx": Math.cos(a) * r + "px", "--dy": Math.sin(a) * r + "px" });
+    }
+  }, { passive: true });
+})();
 
 drawNews(); drawChips(); draw();
 </script>
