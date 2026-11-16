@@ -550,7 +550,7 @@ function coverHTML(w){
 const typeBadge = k => k === "T" ? `<span class="type t">T SERIES</span>` : `<span class="type">ORIGINAL</span>`;
 function card(w, key, i){
   const badge = w.soon ? `<span class="badge">COMING SOON</span>`
-    : w.updated ? `<span class="badge">UPDATE ${esc(w.updated.slice(5))}</span>` : "";
+    : w.updated ? `<span class="badge">UPDATE ${esc(w.updated)}</span>` : "";
   const orig = w.orig ? `<div class="orig">원작 · ${esc(w.orig)}</div>` : "";
   const desc = w.desc ? `<p class="desc">${esc(w.desc)}</p>` : "";
   const tags = w.genre.length ? `<div class="tags">${w.genre.map(g => `<span class="tag">${esc(g)}</span>`).join("")}</div>` : "";
@@ -638,7 +638,7 @@ function openDetail(w){
     .map(([k, label], n) => `<button class="${n ? "main" : ""}${w.links[k] ? "" : " off"}" data-l="${esc(k)}" data-n="${esc(label)}">${esc(label)}</button>`).join("");
 
   $("panel").innerHTML = `
-    <div class="p-cover">${coverHTML(w)}<div class="badges">${typeBadge(TSERIES.includes(w) ? "T" : "O")}${w.soon ? `<span class="badge">COMING SOON</span>` : w.updated ? `<span class="badge">UPDATE ${esc(w.updated.slice(5))}</span>` : ""}</div><button class="p-x" id="pX" aria-label="닫기">✕</button></div>
+    <div class="p-cover">${coverHTML(w)}<div class="badges">${typeBadge(TSERIES.includes(w) ? "T" : "O")}${w.soon ? `<span class="badge">COMING SOON</span>` : w.updated ? `<span class="badge">UPDATE ${esc(w.updated)}</span>` : ""}</div><button class="p-x" id="pX" aria-label="닫기">✕</button></div>
     <div class="p-body">
       <h3>${esc(w.title)}</h3>${orig}${desc}${tags}
       <div class="p-sec"><div class="links">${btns}</div></div>
