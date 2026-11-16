@@ -129,6 +129,8 @@
   .p-sec h5{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;letter-spacing:.02em;
     padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--line)}
   .p-sec h5 span{font-family:"Noto Sans KR",sans-serif;font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+  .role{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);margin:4px 0 8px}
+  .chars + .role{margin-top:18px}
   .chars{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   .char{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .char .ava{aspect-ratio:1/1;background:var(--cover);overflow:hidden}
@@ -325,7 +327,7 @@ for (const w of [...ORIGINAL, ...TSERIES]) {
 /* ===================== 작품 상세 내용 =====================
    desc  : 카드에 보이는 한 줄 소개
    story : 상세 창 제목 아래 소개글 (줄바꿈은 \n)
-   chars : 등장인물 [{ name, info, img }]  img 비우면 사진 칸 없이 글만
+   chars : 등장인물 [{ name, info, img }]  img 비우면 사진 칸 없이 글만 / 조연은 sub: true
    guide : 플레이 가이드 한 줄씩
 ============================================================ */
 const DETAIL = {
@@ -334,9 +336,9 @@ const DETAIL = {
     story: "중학교 때부터 10년, 강도현은 단 한 번도 입 밖에 내지 않은 채 너를 좋아해 왔다.\n체육교육과 공식 미남이라는 소리를 들으며 쏟아지는 고백을 전부 거절하고, 누가 몸에 손만 대도 정색하던 녀석이 네가 팔을 붙잡을 때면 숨까지 멈춘 채 굳어 버린다는 걸 너만 몰랐다.\n\n그리고 발렌타인 밤, 10년을 버텨 온 친구라는 선이 문 하나 열리는 소리에 무너지기 시작한다.",
     chars: [
       { name: "강도현", info: "24세 · 한결대학교 체육교육과 3학년. 같은 하숙집 옆방의 10년지기. 겉은 차갑고 무뚝뚝하지만 당신 앞에서만 풀린다. 질투가 많아도 끝까지 티를 내지 않는다." },
-      { name: "민재", info: "도현의 과 동기. 도현의 마음을 유일하게 눈치채고 대놓고 놀린다." },
-      { name: "서윤", info: "1년 후배. 도현에게 여러 번 고백했다가 정중하게 거절당했다." },
-      { name: "한소이", info: "같은 하숙집 하숙생. 눈치가 빠르고 학교 익명 커뮤니티 단골이다." },
+      { sub: true, name: "민재", info: "도현의 과 동기. 도현의 마음을 유일하게 눈치채고 대놓고 놀린다." },
+      { sub: true, name: "서윤", info: "1년 후배. 도현에게 여러 번 고백했다가 정중하게 거절당했다." },
+      { sub: true, name: "한소이", info: "같은 하숙집 하숙생. 눈치가 빠르고 학교 익명 커뮤니티 단골이다." },
     ],
     guide: [
       "시작 설정은 「들킨 밤」 하나입니다. 발렌타인 밤, 도현의 방문을 열어 버린 순간부터 시작해요.",
@@ -357,8 +359,8 @@ const DETAIL = {
       { name: "노아", info: "23세 · 록슬리 최연소 행정가. 누구에게나 다정하지만 선은 넘지 않는다." },
       { name: "렌", info: "33세 · 록슬리가의 집사. 완벽한 예절 뒤로 사람을 은근히 비꼰다." },
       { name: "휴", info: "38세 · 록슬리가의 정원사. 무심하고 말수가 적다." },
-      { name: "카시우스", info: "53세 · 록슬리 공작. 가문에 이득이 되는지만 따지는 정치가." },
-      { name: "엘레노어", info: "43세 · 록슬리 공작부인. 아들들을 위협하는 것이라면 무엇이든 없애려 한다." },
+      { sub: true, name: "카시우스", info: "53세 · 록슬리 공작. 가문에 이득이 되는지만 따지는 정치가." },
+      { sub: true, name: "엘레노어", info: "43세 · 록슬리 공작부인. 아들들을 위협하는 것이라면 무엇이든 없애려 한다." },
       { name: "카이안", info: "21세 · 록슬리 공작가 후계자. 당신을 벌레 취급한다." },
       { name: "테오도르", info: "20세 · 록슬리 가문 막내. 유일하게 처음부터 당신을 잘 따르는 '천사'." },
     ],
@@ -378,8 +380,8 @@ const DETAIL = {
     story: "꽃을 달라고 했더니 맘모스를 잡아오는 남자.\n\n말은 짧은데, 마음은 이미 다 줘버린 원시인 '가르'.\n그는 당신이 가르쳐준 말을 하나씩 주워 담으며, 언젠가 '좋아해'를 말할 날을 기다린다.\n\n가르의 짝은 처음부터 끝까지 당신 한 사람.",
     chars: [
       { name: "가르", info: "24세 · 부족 최고의 사냥꾼. 과묵하고 말이 짧아 늘 행동이 먼저 간다. 당신이 가르쳐 준 단어를 하나씩 주워 모은다." },
-      { name: "무나", info: "채집을 이끄는 부족의 아주머니. 웃음이 많고, 가르의 서툰 구애를 가장 먼저 알아채고 놀린다." },
-      { name: "라비", info: "당신을 졸졸 따라다니는 부족 꼬마. 가르가 당신만 쳐다보는 걸 큰 소리로 지적한다." },
+      { sub: true, name: "무나", info: "채집을 이끄는 부족의 아주머니. 웃음이 많고, 가르의 서툰 구애를 가장 먼저 알아채고 놀린다." },
+      { sub: true, name: "라비", info: "당신을 졸졸 따라다니는 부족 꼬마. 가르가 당신만 쳐다보는 걸 큰 소리로 지적한다." },
     ],
     guide: [
       "시작 설정은 3가지입니다. 「현대에서 떨어졌다」 첫 만남부터 천천히 · 「부족의 사냥꾼」 서로 신경 쓰기 시작한 사이 · 「짝이 된 첫날밤」 🩷·🔥 100으로 시작.",
@@ -418,9 +420,9 @@ const DETAIL = {
     chars: [
       { name: "노엘", info: "😇 상급 천사, 차기 대천사 후보. 한때 당신이 가르친 후배, 이제는 당신의 사수. 온화한 미소 뒤에 오래 묵힌 짝사랑을 숨겼다." },
       { name: "카르덴", info: "😈 마계의 정점, 대공. 아흔아홉 번 거절당한 남자. 욕망을 숨기지 않는다. \"이번엔 거절 못 하게 해줄 테니까.\"" },
-      { name: "오르엘", info: "🕊️ 노엘의 상관인 대천사. 전생의 당신이 아끼던 후배." },
-      { name: "로크", info: "🦇 카르덴의 부관이자 마계 서열 심판관. 당신을 \"그분\"이라 부른다." },
-      { name: "관리자", info: "📋 중간계 환생 창구 담당. 서류와 도장, 규정 인용이 특기." },
+      { sub: true, name: "오르엘", info: "🕊️ 노엘의 상관인 대천사. 전생의 당신이 아끼던 후배." },
+      { sub: true, name: "로크", info: "🦇 카르덴의 부관이자 마계 서열 심판관. 당신을 \"그분\"이라 부른다." },
+      { sub: true, name: "관리자", info: "📋 중간계 환생 창구 담당. 서류와 도장, 규정 인용이 특기." },
     ],
     guide: [
       "첫 턴에 종족을 고릅니다. !천사 견습 천사, 사수 노엘 (기본값) / !악마 견습 몽마, 주인 카르덴. 바꾸려면 새 대화로 시작해 주세요.",
@@ -441,7 +443,7 @@ const DETAIL = {
       { name: "리안 아스텔", info: "28세 · 신전 파견 신관. 온화하고 다정하다. 당신의 피로를 누구보다 먼저 알아챈다." },
       { name: "데온 카일", info: "31세 · 기사단 부단장. 말이 극단적으로 적다. 명령받은 적 없는데도 늘 당신 곁에 서 있다." },
       { name: "에르네스트 드 카르시안", info: "36세 · 황실 심의관, 이혼 승인권자. 늘 웃는 낯인데 속을 읽을 수 없다." },
-      { name: "세라피네 르웰린", info: "30세 · 성녀 후보. 카슈안의 첫사랑으로 알려진 인물. 중반 이후 등장한다." },
+      { sub: true, name: "세라피네 르웰린", info: "30세 · 성녀 후보. 카슈안의 첫사랑으로 알려진 인물. 중반 이후 등장한다." },
     ],
     guide: [
       "기본은 둘 다 회귀한 세계에서 시작합니다. 첫 턴에 !1회차를 쓰면 아무도 회귀하지 않은 세계, !해결을 쓰면 카슈안과의 오해가 모두 풀린 뒤부터 시작해요.",
@@ -477,8 +479,8 @@ const DETAIL = {
     story: "문을 열면 내가 끝나고, 닫으면 그가 죽는다.\n\n새벽 세 시, 표식 없는 전술 조끼를 입은 남자가 피를 흘리며 문 앞에 서 있다.\n195센티, 금발, 초록 눈. 그리고 웃는다.\n\n\"넘어졌어요. 그냥, 좀 크게.\"\n\n옆구리 상처는 넘어져서 생기지 않는다. 가장자리가 매끈하다. 날붙이다.\n\n그는 존재하지 않는 부대의 존재하지 않는 대원이고, 나는 그를 치료하는 순간 공범이 된다.",
     chars: [
       { name: "애런 그레이", info: "31세 · 제7임시분견대, 호출부호 '워커'. 말이 많고 잘 웃으며, 한 번도 아프다고 말하지 않는다. 등록명이 본명인지 확인된 바 없다." },
-      { name: "마르코 델가도", info: "분견대 최고참. 말이 짧고 냉소적이다. \"쟤가 웃을 때를 조심해라.\"" },
-      { name: "애비 라이트", info: "분견대 막내. 워커를 숭배하며, 자신을 구해 준 사람이라 믿는다." },
+      { sub: true, name: "마르코 델가도", info: "분견대 최고참. 말이 짧고 냉소적이다. \"쟤가 웃을 때를 조심해라.\"" },
+      { sub: true, name: "애비 라이트", info: "분견대 막내. 워커를 숭배하며, 자신을 구해 준 사람이라 믿는다." },
     ],
     guide: [
       "시작 설정은 2가지입니다. 「새벽 세 시의 방문」 회랑 최전방 의료소의 외과의 · 「서명하는 자리」 그를 어디로 보낼지 정하는 작전지휘관.",
@@ -624,10 +626,12 @@ function openDetail(w){
   const orig = w.orig ? `<div class="orig">원작 · ${esc(w.orig)}</div>` : "";
   const tags = w.genre.length ? `<div class="tags">${w.genre.map(g => `<span class="tag">${esc(g)}</span>`).join("")}</div>` : "";
   const desc = w.story ? `<p class="story">${esc(w.story)}</p>` : w.desc ? `<p class="desc">${esc(w.desc)}</p>` : "";
-  const chars = w.chars.length
-    ? `<div class="chars">${w.chars.map(c => `<div class="char">${c.img ? `<div class="ava"><img src="${esc(c.img)}" alt=""></div>` : ""}
-        <div><b>${esc(c.name)}</b><p>${esc(c.info || "")}</p></div></div>`).join("")}</div>`
-    : `<div class="empty-note">등장인물 소개 준비 중</div>`;
+  const charHTML = list => `<div class="chars">${list.map(c => `<div class="char">${c.img ? `<div class="ava"><img src="${esc(c.img)}" alt=""></div>` : ""}
+        <div><b>${esc(c.name)}</b><p>${esc(c.info || "")}</p></div></div>`).join("")}</div>`;
+  const mains = w.chars.filter(c => !c.sub), subs = w.chars.filter(c => c.sub);
+  const chars = !w.chars.length ? `<div class="empty-note">등장인물 소개 준비 중</div>`
+    : !subs.length ? charHTML(mains)
+    : `<div class="role">주연</div>${charHTML(mains)}<div class="role">조연</div>${charHTML(subs)}`;
   const guide = w.guide.length
     ? `<ol class="guide">${w.guide.map(g => `<li>${esc(g)}</li>`).join("")}</ol>`
     : `<div class="empty-note">플레이 가이드 준비 중</div>`;
