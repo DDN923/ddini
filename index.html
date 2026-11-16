@@ -91,8 +91,9 @@
   .cover img.blur,.p-cover img.blur{display:none;filter:blur(18px) brightness(.9);transform:scale(1.15)}
   .tall img.blur{display:block}
   .tall img.main{object-fit:contain}
-  .p-cover img.main{object-fit:contain}
-  .p-cover img.blur{display:block}
+  .p-cover img.blur{display:block;filter:blur(22px) brightness(.85);transform:scale(1.2)}
+  .p-cover img.main{position:relative;inset:auto;width:auto;height:78%;max-width:86%;object-fit:contain;
+    border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
   .cover .ph{font-family:"Cormorant Garamond",serif;font-size:13px;letter-spacing:.24em;color:var(--muted)}
   .badges{position:absolute;top:8px;left:8px;right:8px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
   .badge{font-size:9px;white-space:nowrap;letter-spacing:.12em;font-weight:700;
@@ -118,7 +119,7 @@
   .panel{width:100%;max-width:640px;max-height:92vh;overflow-y:auto;background:var(--surface);
     border-radius:22px 22px 0 0;padding:0 0 28px}
   @media(min-width:700px){.sheet{align-items:center;padding:20px}.panel{border-radius:22px;max-height:88vh}}
-  .p-cover{aspect-ratio:1/1;width:100%;overflow:hidden;background:var(--cover);display:flex;align-items:center;justify-content:center;position:relative}
+  .p-cover{height:min(340px,78vw);width:100%;overflow:hidden;background:var(--cover);display:flex;align-items:center;justify-content:center;position:relative}
   .p-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--surface);
     border:1px solid var(--line);font-size:18px;line-height:1}
   .p-body{padding:22px 22px 0}
