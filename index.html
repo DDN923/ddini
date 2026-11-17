@@ -135,6 +135,13 @@
   .p-x{position:sticky;top:12px;z-index:5;display:block;margin:12px 12px -48px auto;width:36px;height:36px;border-radius:50%;background:var(--surface);
     border:1px solid var(--line);font-size:18px;line-height:1;transition:opacity .2s}
   .p-x.hide{opacity:0;pointer-events:none}
+  .panel{overscroll-behavior:contain}
+  .sheet{transition:background .25s}
+  .panel.snap{transition:transform .25s ease}
+  .jump{position:fixed;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:10;display:flex;flex-direction:column;gap:8px}
+  .jump button{width:42px;height:42px;border-radius:50%;background:color-mix(in srgb,var(--surface) 80%,transparent);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--accent-ink);
+    font-size:16px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.08)}
   .p-body{padding:22px 22px 0}
   .story{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-line;word-break:keep-all;margin:12px 0 4px;padding:14px 16px;background:var(--cover);border-radius:12px}
   .p-body h3{font-family:"Noto Serif KR",serif;font-size:22px;line-height:1.35;word-break:keep-all}
@@ -246,6 +253,7 @@
   <footer>© 띠니</footer>
 </div>
 
+<div class="jump" aria-label="페이지 이동"><button id="toTop" aria-label="맨 위로">▲</button><button id="toBottom" aria-label="맨 아래로">▼</button></div>
 <div class="sheet" id="sheet">
   <div class="panel" role="dialog" aria-modal="true" id="panel"></div>
 </div>
@@ -886,7 +894,43 @@ $("panel").addEventListener("click", e => {
   const x = $("pX"); if (!x || e.target === x) return;
   x.classList.remove("hide"); xAnchor = $("panel").scrollTop;
 });
-function closeDetail(){ $("sheet").classList.remove("open"); document.body.style.overflow = ""; }
+function closeDetail(){
+  $("sheet").classList.remove("open"); document.body.style.overflow = "";
+  const p = $("panel"); p.classList.remove("snap"); p.style.transform = ""; $("sheet").style.background = "";
+}
+
+/* 상세창 맨 위에서 아래로 끌어내리면 닫기 */
+(() => {
+  const p = $("panel"), sh = $("sheet");
+  let y0 = 0, t0 = 0, dy = 0, drag = false, ok = false;
+  p.addEventListener("touchstart", e => {
+    ok = p.scrollTop <= 0; drag = false; dy = 0;
+    y0 = e.touches[0].clientY; t0 = Date.now();
+  }, { passive: true });
+  p.addEventListener("touchmove", e => {
+    if (!ok) return;
+    dy = e.touches[0].clientY - y0;
+    if (!drag && dy > 6 && p.scrollTop <= 0) { drag = true; p.classList.remove("snap"); }
+    if (!drag) { if (dy < 0) ok = false; return; }
+    e.preventDefault();
+    const d = Math.max(0, dy);
+    p.style.transform = `translateY(${d}px)`;
+    sh.style.background = `rgba(20,30,40,${.35 * Math.max(0, 1 - d / 400)})`;
+  }, { passive: false });
+  p.addEventListener("touchend", () => {
+    if (!drag) return; drag = false;
+    const fast = dy > 40 && dy / (Date.now() - t0) > .6;
+    p.classList.add("snap");
+    if (dy > 110 || fast) {
+      p.style.transform = "translateY(100%)"; sh.style.background = "rgba(20,30,40,0)";
+      setTimeout(closeDetail, 230);
+    } else { p.style.transform = ""; sh.style.background = ""; }
+  });
+})();
+
+/* 페이지 맨 위/맨 아래 버튼 */
+$("toTop").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+$("toBottom").addEventListener("click", () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" }));
 
 document.addEventListener("click", e => {
   const c = e.target.closest(".card");
