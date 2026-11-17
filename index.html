@@ -141,7 +141,7 @@
   .jump{position:fixed;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:10;display:flex;flex-direction:column;gap:8px}
   .jump button{width:42px;height:42px;border-radius:50%;background:color-mix(in srgb,var(--surface) 80%,transparent);
     -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--accent-ink);
-    font-size:16px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+    font-size:16px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center}
   .p-body{padding:22px 22px 0}
   .story{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-line;word-break:keep-all;margin:12px 0 4px;padding:14px 16px;background:var(--cover);border-radius:12px}
   .p-body h3{font-family:"Noto Serif KR",serif;font-size:22px;line-height:1.35;word-break:keep-all}
@@ -253,7 +253,7 @@
   <footer>© 띠니</footer>
 </div>
 
-<div class="jump" aria-label="페이지 이동"><button id="toTop" aria-label="맨 위로">▲</button><button id="toBottom" aria-label="맨 아래로">▼</button></div>
+<div class="jump" aria-label="페이지 이동"><button id="toTop" aria-label="맨 위로"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><button id="toBottom" aria-label="맨 아래로"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></button></div>
 <div class="sheet" id="sheet">
   <div class="panel" role="dialog" aria-modal="true" id="panel"></div>
 </div>
