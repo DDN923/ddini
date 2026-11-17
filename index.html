@@ -46,12 +46,13 @@
   .news{margin:28px 0 4px;border:1px solid var(--line);border-radius:16px;padding:14px 18px;background:color-mix(in srgb,var(--surface) 45%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
   .news-h{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;letter-spacing:.06em;color:var(--accent-ink);margin-bottom:6px}
   .news ul{list-style:none}
-  .news li{display:flex;gap:10px;align-items:baseline;padding:7px 0;font-size:14px;border-top:1px solid var(--line)}
+  .news li{display:flex;gap:10px;align-items:baseline;padding:9px 0;font-size:14px;border-top:1px solid var(--line)}
   .news li:first-child{border-top:0}
   .news li.link{cursor:pointer}
   .news li.link:hover .n-t{color:var(--accent-ink)}
   .n-d{flex:none;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .n-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .n-t{flex:1;min-width:0;word-break:keep-all;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  @media(max-width:639px){.news li{flex-direction:column;gap:2px}}
   .n-t b{font-weight:700;margin-right:6px}
   .n-none{font-size:13px;color:var(--muted);padding:6px 0}
 
@@ -967,7 +968,7 @@ const findWork = t => [...ORIGINAL, ...TSERIES].find(w => w.title === t);
 function drawNews(){
   const top = [...NEWS].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
   $("newsList").innerHTML = top.length
-    ? top.map((n, i) => `<li class="${findWork(n.work) || n.body ? "link" : ""}" data-n="${NEWS.indexOf(n)}">
+    ? top.map((n, i) => `<li class="link" data-n="${NEWS.indexOf(n)}">
         <span class="n-d">${esc(n.date)}</span>
         <span class="n-t">${n.work ? `<b>${esc(n.work)}</b>` : ""}${esc(n.text)}</span></li>`).join("")
     : `<li class="n-none">아직 소식이 없어요</li>`;
@@ -978,10 +979,10 @@ $("newsModal").addEventListener("click", e => { if (e.target.id === "newsModal")
 $("newsList").addEventListener("click", e => {
   const li = e.target.closest("li.link"); if (!li) return;
   const n = NEWS[li.dataset.n], w = findWork(n.work);
-  if (!n.body) return openDetail(w);
-  $("nDate").textContent = n.date;
-  $("nTitle").textContent = (n.work ? n.work + " · " : "") + n.text;
-  $("nBody").textContent = n.body;
+  $("nDate").textContent = n.date + (n.work ? " · " + n.work : "");
+  $("nTitle").textContent = n.text;
+  $("nBody").textContent = n.body || "";
+  $("nBody").style.display = n.body ? "" : "none";
   $("nGo").style.display = w ? "" : "none";
   $("nGo").onclick = () => { closeN(); openDetail(w); };
   $("newsModal").classList.add("open");
