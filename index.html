@@ -831,7 +831,7 @@ function draw(){
   const list = sortList(pool.filter(x => match(x.w, q)).map(x => [x.w, x.o, x]));
   $("grid").innerHTML = list.length ? list.map(([,, x]) => card(x.w, x.k, x.i)).join("")
     : `<div class="none">해당하는 작품이 없어요</div>`;
-  $("cnt").textContent = list.length + "작품";
+  $("cnt").textContent = list.length + "개";
 }
 $("q").addEventListener("input", draw);
 $("sort").addEventListener("change", draw);
